@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic'
 import { useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { getSession } from 'next-auth/react'
-import { QueryClient, dehydrate } from 'react-query'
+import { QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
 
 import Flex from '@shared/Flex'
@@ -115,9 +115,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session != null && session.user != null) {
     const client = new QueryClient()
 
-    await client.prefetchQuery(['credit', (session.user as User).id], () =>
-      getCredit((session.user as User).id),
-    )
+    await client.prefetchQuery({
+      queryKey: ['credit', (session.user as User).id],
+      queryFn: () => getCredit((session.user as User).id),
+    })
 
     return {
       props: {

@@ -13,6 +13,7 @@ export interface Option {
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
   options: Option[]
+  placeholder?: string
 }
 
 const BaseSelect = styled.select`

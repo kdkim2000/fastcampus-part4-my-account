@@ -29,7 +29,7 @@ const verticalMargin = 120
 
 const getX = (d: ChartData) => d.date
 const getY = (d: ChartData) => d.balance
-const formatDate = (date: string) => format(parseISO(date), 'M월')
+const formatDate = (date: string) => (date ? format(parseISO(date), 'M월') : '')
 
 function MonthlyChart({ chartData, width, height }: MonthlyChartProps) {
   // bounds

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useRef, useEffect, useState, useCallback, ChangeEvent } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import Input from '@shared/Input'
 import Top from '@shared/Top'
@@ -18,13 +18,11 @@ function SearchPage() {
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { data } = useQuery(
-    ['cards', debouncedKeyword],
-    () => getSearchCards(debouncedKeyword),
-    {
-      enabled: debouncedKeyword !== '',
-    },
-  )
+  const { data } = useQuery({
+    queryKey: ['cards', debouncedKeyword],
+    queryFn: () => getSearchCards(debouncedKeyword),
+    enabled: debouncedKeyword !== '',
+  })
 
   useEffect(() => {
     if (inputRef.current) {

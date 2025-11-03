@@ -1,21 +1,11 @@
-import {
-  getProviders,
-  LiteralUnion,
-  ClientSafeProvider,
-  signIn,
-} from 'next-auth/react'
-import { BuiltInProviderType } from 'next-auth/providers'
+import { getProviders, signIn } from 'next-auth/react'
 
 import Flex from '@shared/Flex'
 import Text from '@shared/Text'
 import Button from '@shared/Button'
 import Spacing from '@shared/Spacing'
 
-function SigninPage({
-  providers,
-}: {
-  providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>
-}) {
+function SigninPage({ providers }: { providers: any }) {
   return (
     <div>
       <Spacing size={100} />
@@ -23,7 +13,7 @@ function SigninPage({
         <Text bold={true}>My Account</Text>
         <Spacing size={80} />
         <ul>
-          {Object.values(providers).map((provider) => (
+          {Object.values(providers).map((provider: any) => (
             <li key={provider.id}>
               <Button onClick={() => signIn(provider.id, { callbackUrl: '/' })}>
                 {provider.name} LOGIN

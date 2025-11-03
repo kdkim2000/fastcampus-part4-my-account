@@ -1,4 +1,4 @@
-import { QueryClient, dehydrate, useInfiniteQuery } from 'react-query'
+import { QueryClient, dehydrate, useInfiniteQuery } from '@tanstack/react-query'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useCallback } from 'react'
 import { useRouter } from 'next/router'
@@ -15,10 +15,13 @@ function CardListPage() {
     hasNextPage = false,
     fetchNextPage,
     isFetching,
-  } = useInfiniteQuery(['cards'], ({ pageParam }) => getCards(pageParam), {
+  } = useInfiniteQuery({
+    queryKey: ['cards'],
+    queryFn: ({ pageParam }: any) => getCards(pageParam),
     getNextPageParam: (snapshot) => {
       return snapshot.lastVisible
     },
+    initialPageParam: null,
   })
 
   const navigate = useRouter()
@@ -79,7 +82,11 @@ function CardListPage() {
 export async function getServerSideProps() {
   const client = new QueryClient()
 
-  await client.prefetchInfiniteQuery(['cards'], () => getCards())
+  await client.prefetchInfiniteQuery({
+    queryKey: ['cards'],
+    queryFn: () => getCards(),
+    initialPageParam: null,
+  })
 
   return {
     props: {

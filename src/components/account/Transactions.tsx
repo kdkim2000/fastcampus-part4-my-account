@@ -14,7 +14,7 @@ function Transactions() {
   const { data } = useTransactions({ suspense: true })
 
   const transactions = data?.pages
-    .map(({ items }) => items)
+    .map((page: any) => page.items)
     .flat()
     .slice(0, 5)
 
@@ -39,10 +39,14 @@ function Transactions() {
                 contents={
                   <ListRow.Texts
                     title={transaction.displayText}
-                    subTitle={format(
-                      parseISO(transaction.date),
-                      'yyyy-MM-dd HH:mm:SS',
-                    )}
+                    subTitle={
+                      transaction.date
+                        ? format(
+                            parseISO(transaction.date),
+                            'yyyy-MM-dd HH:mm:SS',
+                          )
+                        : ''
+                    }
                   />
                 }
                 right={

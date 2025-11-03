@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useMutation } from 'react-query'
+import { useState, useEffect } from 'react'
+import { useMutation } from '@tanstack/react-query'
 
 import useCreditCheck from '@components/credit/hooks/useCreditCheck'
 import { useAlertContext } from '@contexts/AlertContext'
@@ -14,11 +14,13 @@ function CreditCheckPage() {
   const [readyToPoll, setReadyToPoll] = useState(true)
   const user = useUser()
 
-  const { mutate } = useMutation((creditScore: number) =>
-    updateCredit({ creditScore, userId: user?.id as string }),
-  )
+  const { mutate } = useMutation({
+    mutationFn: (creditScore: number) =>
+      updateCredit({ creditScore, userId: user?.id as string }),
+  })
 
-  const { data: status } = useCreditCheck({
+  const { data: status, error } = useCreditCheck({
+    enabled: readyToPoll,
     onSuccess: (creditScore) => {
       setReadyToPoll(false)
       mutate(creditScore)
@@ -33,7 +35,6 @@ function CreditCheckPage() {
         },
       })
     },
-    enabled: readyToPoll,
   })
 
   return (

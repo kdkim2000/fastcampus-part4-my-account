@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import { getEventBanners } from '@remote/banner'
 import useAccount from '@hooks/useAccount'
@@ -6,16 +6,13 @@ import useAccount from '@hooks/useAccount'
 function useEventBanners() {
   const { data: account } = useAccount()
 
-  return useQuery(
-    ['event-banners'],
-    () =>
+  return useQuery({
+    queryKey: ['event-banners'],
+    queryFn: () =>
       getEventBanners({
         hasAccount: account != null && account.status === 'DONE',
       }),
-    {
-      suspense: true,
-    },
-  )
+  })
 }
 
 export default useEventBanners
