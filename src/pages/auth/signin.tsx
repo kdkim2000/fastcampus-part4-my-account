@@ -13,7 +13,7 @@ function SigninPage({ providers }: { providers: any }) {
         <Text bold={true}>My Account</Text>
         <Spacing size={80} />
         <ul>
-          {Object.values(providers).map((provider: any) => (
+          {providers && Object.values(providers).map((provider: any) => (
             <li key={provider.id}>
               <Button onClick={() => signIn(provider.id, { callbackUrl: '/' })}>
                 {provider.name} LOGIN
@@ -31,7 +31,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      providers,
+      providers: providers || {},
     },
   }
 }
