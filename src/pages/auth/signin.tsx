@@ -13,13 +13,16 @@ function SigninPage({ providers }: { providers: any }) {
         <Text bold={true}>My Account</Text>
         <Spacing size={80} />
         <ul>
-          {providers && Object.values(providers).map((provider: any) => (
-            <li key={provider.id}>
-              <Button onClick={() => signIn(provider.id, { callbackUrl: '/' })}>
-                {provider.name} LOGIN
-              </Button>
-            </li>
-          ))}
+          {providers &&
+            Object.values(providers).map((provider: any) => (
+              <li key={provider.id}>
+                <Button
+                  onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+                >
+                  {provider.name} LOGIN
+                </Button>
+              </li>
+            ))}
         </ul>
       </Flex>
     </div>
