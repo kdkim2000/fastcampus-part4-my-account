@@ -1,6 +1,10 @@
 import type { AppProps } from 'next/app'
 import { Global } from '@emotion/react'
-import { QueryClientProvider, QueryClient, Hydrate } from 'react-query'
+import {
+  QueryClientProvider,
+  QueryClient,
+  HydrationBoundary,
+} from '@tanstack/react-query'
 import { SessionProvider } from 'next-auth/react'
 import { useReportWebVitals } from 'next/web-vitals'
 
@@ -11,7 +15,13 @@ import Navbar from '@shared/Navbar'
 import { AlertContextProvider } from '@contexts/AlertContext'
 import ErrorBoundary from '@shared/ErrorBoundary'
 
-const client = new QueryClient({})
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+    },
+  },
+})
 
 export default function App({
   Component,
@@ -26,14 +36,14 @@ export default function App({
       <Global styles={globalSteyls} />
       <SessionProvider session={session}>
         <QueryClientProvider client={client}>
-          <Hydrate state={dehydratedState}>
+          <HydrationBoundary state={dehydratedState}>
             <ErrorBoundary>
               <AlertContextProvider>
                 <Navbar />
                 <Component {...pageProps} />
               </AlertContextProvider>
             </ErrorBoundary>
-          </Hydrate>
+          </HydrationBoundary>
         </QueryClientProvider>
       </SessionProvider>
     </Layout>

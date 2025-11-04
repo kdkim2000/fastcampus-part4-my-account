@@ -6,8 +6,8 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
-} from 'react-query'
-import { useMemo } from 'react'
+} from '@tanstack/react-query'
+import { useMemo, useEffect } from 'react'
 
 import { getTerms } from '@remote/account'
 import { User } from '@models/user'
@@ -23,25 +23,27 @@ function TermsPage() {
   const user = useUser()
   const client = useQueryClient()
 
-  const { data } = useQuery(
-    ['terms', user?.id],
-    () => getTerms(user?.id as string),
-    {
-      enabled: user != null,
-    },
-  )
+  const { data } = useQuery({
+    queryKey: ['terms', user?.id],
+    queryFn: () => getTerms(user?.id as string),
+    enabled: user != null,
+  })
 
-  const { mutate, isLoading } = useMutation(
-    (termIds: string[]) => updateTerms(user?.id as string, termIds),
-    {
-      onSuccess: () => {
-        client.invalidateQueries(['terms', user?.id])
-      },
-      onError: () => {
-        // TODO
-      },
-    },
-  )
+  const { mutate, isPending, isSuccess, isError } = useMutation({
+    mutationFn: (termIds: string[]) => updateTerms(user?.id as string, termIds),
+  })
+
+  useEffect(() => {
+    if (isSuccess) {
+      client.invalidateQueries({ queryKey: ['terms', user?.id] })
+    }
+  }, [isSuccess, client, user?.id])
+
+  useEffect(() => {
+    if (isError) {
+      // TODO
+    }
+  }, [isError])
 
   const 동의한약관목록 = useMemo(() => {
     if (data == null) {
@@ -97,7 +99,7 @@ function TermsPage() {
               right={
                 <Button
                   onClick={() => handleDisagree(term.id)}
-                  disabled={isLoading === true}
+                  disabled={isPending === true}
                 >
                   철회
                 </Button>
@@ -116,9 +118,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session != null && session.user != null) {
     const client = new QueryClient()
 
-    await client.prefetchQuery(['terms', (session.user as User).id], () =>
-      getTerms((session.user as User).id),
-    )
+    await client.prefetchQuery({
+      queryKey: ['terms', (session.user as User).id],
+      queryFn: () => getTerms((session.user as User).id),
+    })
 
     return {
       props: {

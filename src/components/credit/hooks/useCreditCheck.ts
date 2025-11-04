@@ -1,26 +1,36 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 import { CHECK_STATUS } from '@constants/credit'
 
 interface useCreditCheckProps {
-  onSuccess: (creditScore: number) => void
-  onError: () => void
+  onSuccess?: (creditScore: number) => void
+  onError?: () => void
   enabled: boolean
 }
 
 function useCreditCheck({ onSuccess, onError, enabled }: useCreditCheckProps) {
-  return useQuery(['useCreditCheck'], () => getCheckStatus(), {
+  const query = useQuery({
+    queryKey: ['useCreditCheck'],
+    queryFn: () => getCheckStatus(),
     enabled,
     refetchInterval: 2_000,
     staleTime: 0,
-    onSuccess: (status) => {
-      // 조회성공 !
-      if (status === CHECK_STATUS.COMPLETE) {
-        onSuccess(getCreditScore(200, 1000))
-      }
-    },
-    onError,
   })
+
+  useEffect(() => {
+    if (query.data === CHECK_STATUS.COMPLETE && onSuccess) {
+      onSuccess(getCreditScore(200, 1000))
+    }
+  }, [query.data, onSuccess])
+
+  useEffect(() => {
+    if (query.error && onError) {
+      onError()
+    }
+  }, [query.error, onError])
+
+  return query
 }
 
 function getCheckStatus() {

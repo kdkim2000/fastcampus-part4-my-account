@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
-import { getSession, useSession } from 'next-auth/react'
-import { QueryClient, dehydrate } from 'react-query'
+import { useSession, getSession } from 'next-auth/react'
+import { QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
 
 import Account from '@components/home/Account'
@@ -47,9 +47,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session != null && session.user != null) {
     const client = new QueryClient()
 
-    await client.prefetchQuery(['account', (session.user as User).id], () =>
-      getAccount((session.user as User).id),
-    )
+    await client.prefetchQuery({
+      queryKey: ['account', (session.user as User).id],
+      queryFn: () => getAccount((session.user as User).id),
+    })
 
     return {
       props: {

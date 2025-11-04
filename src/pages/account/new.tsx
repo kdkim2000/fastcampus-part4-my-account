@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { getSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
@@ -13,6 +12,7 @@ import { User } from '@/models/user'
 import Form from '@components/account/Form'
 import { Account } from '@models/account'
 import FullPageLoader from '@/components/shared/FullPageLoader'
+import { getSession } from 'next-auth/react'
 
 const FixedBottomButton = dynamic(() => import('@shared/FixedBottomButton'))
 

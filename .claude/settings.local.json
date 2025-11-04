@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn install)",
+      "Bash(yarn npm info:*)",
+      "Bash(yarn build:*)",
+      "Bash(tee:*)",
+      "Bash(yarn prettier:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

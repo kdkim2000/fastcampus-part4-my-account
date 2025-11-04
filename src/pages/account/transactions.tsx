@@ -1,5 +1,5 @@
 import { getSession } from 'next-auth/react'
-import { QueryClient, dehydrate } from 'react-query'
+import { QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useCallback, useState } from 'react'
@@ -83,10 +83,14 @@ function TransactionsPage() {
                 contents={
                   <ListRow.Texts
                     title={transaction.displayText}
-                    subTitle={format(
-                      parseISO(transaction.date),
-                      'yyyy-MM-dd HH:mm:SS',
-                    )}
+                    subTitle={
+                      transaction.date
+                        ? format(
+                            parseISO(transaction.date),
+                            'yyyy-MM-dd HH:mm:SS',
+                          )
+                        : ''
+                    }
                   />
                 }
                 right={
@@ -113,10 +117,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session != null && session.user != null) {
     const client = new QueryClient()
 
-    await client.prefetchInfiniteQuery(
-      ['transactions', (session.user as User)?.id, 'all'],
-      () => getTransactions({ userId: (session.user as User)?.id as string }),
-    )
+    await client.prefetchInfiniteQuery({
+      queryKey: ['transactions', (session.user as User)?.id, 'all'],
+      queryFn: () =>
+        getTransactions({ userId: (session.user as User)?.id as string }),
+      initialPageParam: null,
+    })
 
     return {
       props: {

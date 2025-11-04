@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { differenceInDays } from 'date-fns'
 
 import withSusepnse from '@hooks/withSuspense'
@@ -16,13 +16,10 @@ function PiggybankRow() {
   const navigate = useRouter()
   const user = useUser()
 
-  const { data } = useQuery(
-    ['piggybank', user?.id],
-    () => getPiggybank(user?.id as string),
-    {
-      suspense: true,
-    },
-  )
+  const { data } = useQuery({
+    queryKey: ['piggybank', user?.id],
+    queryFn: () => getPiggybank(user?.id as string),
+  })
 
   if (data == null) {
     return (

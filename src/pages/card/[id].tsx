@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext } from 'next'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
@@ -24,7 +24,9 @@ interface CardDetailPageProps {
 function CardDetailPage({ initialCard }: CardDetailPageProps) {
   const { id } = useParams()
 
-  const { data } = useQuery(['card', id], () => getCard(id as string), {
+  const { data } = useQuery({
+    queryKey: ['card', id],
+    queryFn: () => getCard(id as string),
     initialData: initialCard,
   })
 
